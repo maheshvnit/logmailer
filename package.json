@@ -1,0 +1,27 @@
+{
+  "name": "logmailer",
+  "version": "0.0.1",
+  "description": "Log mailer for (Node) JS. Aggregate your log/error mail from all over your app and send it when you want.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mindactuate/logmailer.git"
+  },
+  "keywords": [
+    "log mailer",
+    "mailjs"
+  ],
+  "author": {
+    "name": "Daniel Gruner",
+    "company": "mindactuate",
+    "email": "dnlgrnr911@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mindactuate/logmailer/issues"
+  },
+  "homepage": "https://github.com/mindactuate/logmailer#readme",
+  "dependencies": {
+    "emailjs": "^2.2.0"
+  }
+}
