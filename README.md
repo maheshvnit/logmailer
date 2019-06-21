@@ -8,15 +8,15 @@ Log mailer for (Node) JS. Aggregate your log/error mail from all over your app a
 
 ## logmailer uses emailjs
 
-Please see here ![https://www.npmjs.com/package/emailjs](https://www.npmjs.com/package/emailjs)! Without **emailjs** logmailer would not exist. Special thanks/credits to ![eleith](https://github.com/eleith)!
+Please see here [npmjs.com/package/emailjs](https://www.npmjs.com/package/emailjs)! Without **emailjs** logmailer would not exist. Special thanks/credits to [eleith](https://github.com/eleith)!
 
 ## Purpose
 
-Think of the following scenario: There are several events in your app and you want to be noticed about them via email. Well, if you have one notification, then you have one email. That's fine. But what if you have lots of notifications over runtime, thrown by functions all over your app? Then you would have to aggregate all those notifications to a (log) file and send it when your app is finished. Lots of loggers are able to log into files. But what if you want to have a well formatted html email? Then you can use **logmailer**. :)
+Think of the following scenario: There are several events in your app and you want to be noticed about them via email. Well, if you have one notification, then you have one email. That's fine. But what if you have lots of notifications over runtime, thrown by functions scattered all over your app? Then you would have to aggregate all those notifications to a (log) file and send it when your app run is finished. Lots of loggers are able to write into files. But what if you want to have a well formatted html email? Then you can use **logmailer**. :)
 
 ## Features
 
-- with **logmailer** you can aggregate error or log htmls all over your app
+- with **logmailer** you can aggregate error or log htmls everywhere in your app
 - use as much html & css as you want (as long as it can be handled by email clients)
 - format your objects or arrays of objects as beautiful html tables
 
@@ -39,8 +39,8 @@ $ npm install logmailer
 file1.js (e.g. index.js or app.js)
 
 ```javascript
-    let logmailer = require("logmailer");
-    // import logmailer from "logmailer";
+    let logMailer = require("logmailer");
+    // import logMailer from "logmailer";
 
     logMailer.default.configureMailClient("smtp.googlemail.com", "user", "password", true);
 ```
@@ -50,8 +50,8 @@ file1.js (e.g. index.js or app.js)
 file2.js:
 
 ```javascript
-    let logmailer = require("logmailer");
-    // import logmailer from "logmailer";
+    let logMailer = require("logmailer");
+    // import logMailer from "logmailer";
 
     logMailer.default.addToLogHTML("Starting time", `Starting app run now: ${new Date().toISOString()}`);
 
@@ -73,6 +73,13 @@ file2.js:
             logger.info("mail sent successfully");
         }
     });
+```
+
+### Reset your htmls
+
+```javascript
+    logMailer.default.resetErrorHTML();
+    logMailer.default.resetLogHTML();
 ```
 
 ### Format objects or arrays of objects as html tables
@@ -141,8 +148,8 @@ file1.js (e.g. index.js or app.js)
 
 ## Screenshots
 
-![Screenshot 1](Screenshot_20190621-201524.png)
-![Screenshot 2](Screenshot_20190621-201700.png)
+<img src="Screenshot_20190621-201524.png" width="250">
+<img src="Screenshot_20190621-201700.png" width="250">
 
 ## License
 

@@ -62,6 +62,22 @@ class Mailer {
     }
 
     /**
+     * Reset current error html
+     */
+    resetErrorHTML() {
+        this.errorHTML.html = "";
+        this.errorHTML.errorCount = 0;
+        this.errorHTML.firstHeadline = "";
+    }
+
+    /**
+     * Reset current log html
+     */
+    resetLogHTML() {
+        this.logHTML.html = "";
+    }
+
+    /**
      * Send mail finally
      * @param {string} from your mail alias you want to send from (e.g. "fictive-sender[at]fictive-domain.com")
      * @param {string} to your mail recipients, separated by comma (e.g. "baerbel[at]gmail.com,gudrun[at]gmx.de")
