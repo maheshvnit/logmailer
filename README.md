@@ -148,8 +148,8 @@ file1.js (e.g. index.js or app.js)
 
 ## Screenshots
 
-<img src="Screenshot_20190621-201524.png" width="250">
-<img src="Screenshot_20190621-201700.png" width="250">
+<img src="Screenshot_20190621-201524.png" width="400">
+<img src="Screenshot_20190621-201700.png" width="400">
 
 ## License
 
