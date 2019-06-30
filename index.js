@@ -125,14 +125,14 @@ class Mailer {
      * @param {Object} obj Object
      */
     convertObjectToHTMLTable(obj) {
-        if (typeof (obj) === 'object') {
+        if (obj && typeof (obj) === 'object') {
             let keys = Object.keys(obj);
             if (keys.length > 0) {
                 // https://stackoverflow.com/questions/17684201/create-html-table-from-javascript-object
                 let html = '<table style="border: 1px solid #ddd; border-collapse: collapse;">';
                 for (let i = 0; i < keys.length; i++) {
                     let item = obj[keys[i]];
-                    let value = (typeof (item) === 'object') ? convertObjectToHTMLTable(item) : item.toString();
+                    let value = (typeof (item) === 'object') ? this.convertObjectToHTMLTable(item) : item.toString();
                     html += '<tr style="border: 1px solid grey;">';
                     html += '<td style="border: 1px solid grey; padding: 5px;">' + keys[i] + '</td>';
                     html += '<td style="border: 1px solid grey; padding: 5px;">' + value + '</td>';
