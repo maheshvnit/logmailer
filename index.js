@@ -1,109 +1,153 @@
 let email = require("emailjs/email");
 
 /**
- * Mailer to aggregate error or log mails. It's a singleton, so you can get the instance like this: `logMailer.default...`
+ * Mailer to aggregate error or log mails. It's a singleton. Create it once by `logmailer.create(..)`, use it then simply like `logmailer.add(..)` or `logmailer.send(..)`
  *
- * Uses emailjs (https://www.npmjs.com/package/emailjs)
+ * Instructions see https://www.npmjs.com/package/logmailer
  *
  */
 class Mailer {
     constructor() {
         if (!Mailer.instance) {
-            this.errorHTML = {
-                html: "",
-                firstHeadline: "",
-                errorCount: 0
-            }
-            this.logHTML = {
-                html: ""
-            }
+            this.appName = `App-${process.pid}`;
+            this.mailAlias = `logmailer-${process.pid}`
             this.mailClient = null;
+            this.recipients = [];
+            this.chapters = {};
         }
         return Mailer.instance;
     }
 
     /**
-     * Create a mail client first
-     * @param {string} host
-     * @param {string} user
-     * @param {string} password
-     * @param {boolean} ssl
+     * Create the logmailer instance once
+     * @param {Object} options
+     * @param {string} [options.appName] (optional, default is App-#pid) meaningful app name is used in mail subject (e.g. appName [Success]: YourSubject)
+     * @param {string} [options.mailAlias] (optional, default is logmailer-#pid) your mail alias you want to send from (e.g. "fictive-sender[at]fictive-domain.com")
+     * @param {Object} options.client mail client configuration
+     * @param {string} options.client.host email host, e.g. smtp.googlemail.com
+     * @param {string} options.client.user email user
+     * @param {string} options.client.password email password
+     * @param {boolean} options.client.ssl use ssl
+     * @param {string[]|Recipient[]} options.recipients Array, define the recipients via email string or recipient object
+     * @param {Object} options.chapters use the StandardChapters or define your own
+     * @param {Chapter} [options.chapters.customChapter] just an example
      */
-    configureMailClient(host, user, password, ssl) {
+    create(options) {
+
+        this.appName = options.appName;
+        this.mailAlias = options.mailAlias;
+
         let mailClient = email.server.connect({
-            host: host,
-            user: user,
-            password: password,
-            ssl: ssl
+            host: options.client.host,
+            user: options.client.user,
+            password: options.client.password,
+            ssl: options.client.ssl
         });
+
         this.mailClient = mailClient;
-    }
-
-    /**
-     * Add to error html
-     * @param {string} headline can also be null
-     * @param {string} contentHTML
-     */
-    addToErrorHTML(headline, contentHTML) {
-        if (this.errorHTML.errorCount === 0) {
-            this.errorHTML.firstHeadline = headline;
-        }
-        this.errorHTML.html += `${headline ? `<h4><font color="red">${headline}</font></h4>` : "<br/>"}<span>${contentHTML}</span>`;
-        this.errorHTML.errorCount++;
-    }
-
-    /**
-     * Add to log html
-     * @param {string} headline can also be null
-     * @param {string} contentHTML
-     */
-    addToLogHTML(headline, contentHTML) {
-        this.logHTML.html += `${headline ? `<h4>${headline}</h4>` : "<br/>"}<span>${contentHTML}</span>`;
-    }
-
-    /**
-     * Reset current error html
-     */
-    resetErrorHTML() {
-        this.errorHTML.html = "";
-        this.errorHTML.errorCount = 0;
-        this.errorHTML.firstHeadline = "";
-    }
-
-    /**
-     * Reset current log html
-     */
-    resetLogHTML() {
-        this.logHTML.html = "";
+        this.recipients = options.recipients;
+        this.chapters = options.chapters;
     }
 
     /**
      * Send mail finally
-     * @param {string} from your mail alias you want to send from (e.g. "fictive-sender[at]fictive-domain.com")
-     * @param {string} to your mail recipients, separated by comma (e.g. "baerbel[at]gmail.com,gudrun[at]gmx.de")
-     * @param {string} appName meaningful app name is used in mail subject (e.g. appName [Success]: YourSubject)
-     * @param {function} callback returns an error if there was one, otherwise returns null
+     * @param {function(Error): void} callback returns an error if there was one, otherwise returns null
      */
-    sendMail(from, to, appName, callback) {
-        from = from.replace(/\[at\]/gm, "@");
-        to = to.replace(/\[at\]/gm, "@");
+    sendMail(callback) {
 
-        let subjectDetail = this.errorHTML.errorCount > 0 ? `${this.errorHTML.errorCount} errors` : "Completed without errors";
-        let html = this.errorHTML.errorCount > 0 ? `${this.errorHTML.html}<h2>Logs</h2>${this.logHTML.html}` : `${this.logHTML.html}<h2>${this.errorHTML.errorCount} Errors</h2>${this.errorHTML.html}`;
+        let recipientHTMLs = [];
 
-        let message = {
-            text: "Please use an email client, which is able to display HTML!",
-            subject: `${appName} ${this.errorHTML.errorCount > 0 ? "[ERROR]" : "[SUCCESS]"} ${subjectDetail}`,
-            from: from,
-            to: to,
-            attachment: [
-                { data: `<html><h2>${appName}</h2><h4>${subjectDetail}</h4><div>${html}</div></html>`, alternative: true }
-            ]
-        }
+        this.recipients.forEach(recipient => {
 
-        this.mailClient.send(message, (err, message) => {
-            if (err) { callback(err) } else { callback(null); };
+            let recipientHTML = {
+                emailAddress: "",
+                sendEmail: false,
+                html: "",
+                subject: `${this.appName}`
+            }
+
+            if (recipient.hasOwnProperty("emailAddress")) {
+                recipientHTML.emailAddress = recipient.emailAddress; // recipient is a Recipient object
+            } else {
+                recipientHTML.emailAddress = recipient; // recipient is an email string only
+            }
+
+            if (recipient.getsEmailOnlyIfChaptersNotEmpty && Array.isArray(recipient.getsEmailOnlyIfChaptersNotEmpty)) {
+                recipient.getsEmailOnlyIfChaptersNotEmpty.forEach(chapter => {
+                    if (chapter.html) {
+                        recipientHTML.sendEmail = true;
+                    }
+                })
+            } else {
+                recipientHTML.sendEmail = true;
+            }
+
+            let chs = {};
+
+            if (recipient.canOnlySeeChapters && Array.isArray(recipient.canOnlySeeChapters)) {
+                chs = recipient.canOnlySeeChapters;
+            } else {
+                chs = this.chapters;
+            }
+
+            Object.values(chs).forEach(chapter => {
+                if (chapter.html) {
+                    if (chapter.hasOwnProperty("count")) {
+                        if (chapter.count > 0) {
+                            recipientHTML.subject += ` | [${chapter.name}]: ${chapter.count}`;
+                            recipientHTML.html += `<h2><font color="${chapter.color}">${chapter.name}: ${chapter.count}</font></h2>`;
+                        }
+                    } else {
+                        recipientHTML.html += `<h2><font color="${chapter.color}">${chapter.name}</font></h2>`;
+                    }
+                    recipientHTML.html += chapter.html;
+                }
+            })
+            recipientHTMLs.push(recipientHTML);
         })
+
+        this._mailSender(recipientHTMLs, null, errors => {
+            callback(errors);
+        })
+    }
+
+    /**
+     * @private
+     */
+    _mailSender(recipientHTMLs, errors, callback) {
+        if (!errors) {
+            errors = {};
+        }
+        if (recipientHTMLs.length > 0) {
+            let recipientHTML = recipientHTMLs[0];
+            if (recipientHTML.sendEmail) {
+                let message = {
+                    text: "Please use an email client, which is able to display HTML!",
+                    subject: recipientHTML.subject,
+                    from: this.mailAlias,
+                    to: recipientHTML.emailAddress,
+                    attachment: [
+                        { data: `<html><h2>${recipientHTML.subject}</h2><div>${recipientHTML.html}</div></html>`, alternative: true }
+                    ]
+                }
+                this.mailClient.send(message, (err, message) => {
+                    if (err) {
+                        errors[recipientHTML.emailAddress] = err;
+                    }
+                    recipientHTMLs.shift();
+                    this._mailSender(recipientHTMLs, errors, callback);
+                })
+            } else {
+                recipientHTMLs.shift();
+                this._mailSender(recipientHTMLs, errors, callback);
+            }
+        } else {
+            if (Object.keys(errors).length > 0) {
+                callback(errors);
+            } else {
+                callback();
+            }
+        }
     }
 
     /**
@@ -149,6 +193,75 @@ class Mailer {
     }
 }
 
+class Recipient {
+    /**
+     * A single recipient object
+     * @constructor
+     * @param {string} emailAddress
+     * @param {Chapter[]} [getsEmailOnlyIfChaptersNotEmpty] (optional) array of chapters e.g. [Error], the recipient will get the email only if there is at least 1 logged error
+     * @param {Chapter[]} [canOnlySeeChapters] (optional) array of chapters e.g. [Summary,Error], the recipient can only see the summary and the logged errors
+     */
+    constructor(emailAddress, getsEmailOnlyIfChaptersNotEmpty, canOnlySeeChapters) {
+        this.emailAddress = emailAddress;
+        this.getsEmailOnlyIfChaptersNotEmpty = getsEmailOnlyIfChaptersNotEmpty;
+        this.canOnlySeeChapters = canOnlySeeChapters;
+    }
+}
+
+class Chapter {
+    /**
+     * A single chapter object
+     * @param {string} name chapters name e.g. "Summary"
+     * @param {boolean} [hasCount=false] (optional, default is false) set to true if you want to count how often you added content to the chapter (good for errors or warnings)
+     * @param {string} [color] (optional, default is "black") use colors to colorize headlines (you can use hex, rgb, rgba, color codes etc. but it is **important** that the email client can display the color correctly)
+     */
+    constructor(name, hasCount, color) {
+        this.name = name;
+        this.html = "";
+        this.color = color;
+        if (hasCount) {
+            this.count = 0;
+        }
+        if (color) {
+            this.color = color;
+        } else {
+            this.color = "black";
+        }
+
+        /**
+         * Add content to chapter
+         * @param {String} headline can also be null
+         * @param {String} contentHTML
+         */
+        this.add = function(headline, contentHTML){
+            this.html += `${headline ? `<h4><font color="${this.color}">${headline}</font></h4>` : "<br/>"}<span>${contentHTML}</span>`;
+            if (this.hasOwnProperty("count") && headline) {
+                this.count++;
+            }
+        }
+
+        /**
+         * Reset specific chapter
+         */
+        this.reset = function(){
+            this.html = "";
+            if (this.hasOwnProperty("count")) {
+                this.count = 0;
+            }
+        }
+    }
+}
+
+let StandardChapters = {
+    Summary: new Chapter("Summary", false),
+    Errors: new Chapter("Errors", true, "red"),
+    Warnings: new Chapter("Warnings", true, "orange"),
+    Logs: new Chapter("Logs", false, "limegreen")
+};
+
 let instance = new Mailer();
 
-module.exports.default = instance;
+module.exports.logmailer = instance;
+module.exports.Recipient = Recipient;
+module.exports.Chapter = Chapter;
+module.exports.StandardChapters = StandardChapters;
