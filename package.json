@@ -1,6 +1,6 @@
 {
   "name": "logmailer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Log mailer for (Node) JS. Aggregate your log/error mail from all over your app and send it when you want.",
   "main": "index.js",
   "repository": {

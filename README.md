@@ -1,4 +1,4 @@
-# logmailer 0.1.0
+# logmailer
 Log mailer for (Node) JS. Aggregate your log/error mail from all over your app and send it when you want.
 
 [![npm version](https://img.shields.io/npm/v/logmailer.svg?style=flat-square)](https://www.npmjs.com/package/logmailer)
