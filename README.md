@@ -12,7 +12,15 @@ Please see here [npmjs.com/package/emailjs](https://www.npmjs.com/package/emailj
 
 ## Purpose
 
-Think of the following scenario: There are several events in your app and you want to be noticed about them via email. Well, if you have one notification, then you have one email. That's fine. But what if you have lots of notifications over runtime, thrown by functions scattered all over your app? Then you would have to aggregate all those notifications to a (log) file and send it when your app run is finished. Lots of loggers are able to write into files. But what if you want to have a well formatted html email? Then you can use **logmailer**. :)
+Think of the following scenario: There are several events in your app and you want to be noticed about them via email. Well, if you have one notification, then you have one email. That's fine. But what if you have **lots of notifications over runtime, thrown by functions scattered all over your app**? Then you would have to aggregate all those notifications to a (log) file and send it when your app run is finished. Lots of loggers are able to write into files. But what if you want to have a **well formatted html email**? Then you can use **logmailer**. :)
+
+## News
+
+**Nov 09, 2019**
+I am happy to announce that logmailer is **production ready**. 🎉 Logmailer proofed itself over the last 3 or 4 months within the context of my current side project, the [Globallytics Fund No. 1](https://globallytics.de/), which is a machine learning based fund. I use logmailer in several scripts running on our server. It is very stable and there weren't any issues all this time.
+
+**Sep 29, 2019**
+I just wrote an article about logmailer. You can find it on [Medium](https://medium.com/@mindactuate/log-mailer-for-node-js-25a4be25025f) and [Dev.to](https://dev.to/mindactuate/log-mailer-for-node-js-aggregate-your-log-error-mail-from-all-over-your-app-and-send-it-when-you-want-1oh1).
 
 ## Features (over time)
 
@@ -25,6 +33,8 @@ Think of the following scenario: There are several events in your app and you wa
   - your mail is separated in **chapters** which are stacked on each other e.g. `"Summary" -> "Errors" -> "Warnings" -> "Logs" (StandardChapters)`
   - you can adjust **which mail recipient can see which chapters**, e.g. the manager is only allowed to see the (custom) chapter `"Management Summary"`
   - you can adjust that a specific **mail recipient only gets an email if a certain chapter is not empty**, e.g. I only want to receive an email personally if there is at least one error in the `"Errors"` chapter
+- 1.0
+  - just an announcement, that logmailer is production ready! no code changes! you can update without any problems
 - ideas for the future
   - logmailer runs in a **separate process** which is *independent* to the original process
   - I would be happy to read your ideas
