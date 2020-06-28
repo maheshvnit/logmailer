@@ -22,6 +22,11 @@ I am happy to announce that logmailer is **production ready**. 🎉 Logmailer pr
 **Sep 29, 2019**
 I just wrote an article about logmailer. You can find it on [Medium](https://medium.com/@mindactuate/log-mailer-for-node-js-25a4be25025f) and [Dev.to](https://dev.to/mindactuate/log-mailer-for-node-js-aggregate-your-log-error-mail-from-all-over-your-app-and-send-it-when-you-want-1oh1).
 
+**Jun 28, 2020**
+No news about the code but still using logmailer in heavy production and it works and works and works. :) Logmailer has generated and sent over 18.000 mails now during the first year of our ML based stock fund [Globallytics Fund No. 1](https://globallytics.de/). Logmailer is an irreplacable tool for us. We get notified on errors and also have a kind of documentation for the BAFIN like "hey, we know it and we immediately take action if something goes wrong".
+
+<img src="2020-06-28 13_36_46-Mail.png" width="600">
+
 ## Features (over time)
 
 - 0.0.3
