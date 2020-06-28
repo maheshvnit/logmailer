@@ -20,7 +20,7 @@ Think of the following scenario: There are several events in your app and you wa
 I am happy to announce that logmailer is **production ready**. 🎉 Logmailer proofed itself over the last 3 or 4 months within the context of my current side project, the [Globallytics Fund No. 1](https://globallytics.de/), which is a machine learning based fund. I use logmailer in several scripts running on our server. It is very stable and there weren't any issues all this time.
 
 **Sep 29, 2019**
-I just wrote an article about logmailer. You can find it on [Medium](https://medium.com/@mindactuate/log-mailer-for-node-js-25a4be25025f) and [Dev.to](https://dev.to/mindactuate/log-mailer-for-node-js-aggregate-your-log-error-mail-from-all-over-your-app-and-send-it-when-you-want-1oh1).
+I just wrote an article about logmailer. You can find it on [Medium](https://medium.com/@mindactuate/log-mailer-for-node-js-e27648634934) and [Dev.to](https://dev.to/mindactuate/log-mailer-for-node-js-aggregate-your-log-error-mail-from-all-over-your-app-and-send-it-when-you-want-1oh1).
 
 **Jun 28, 2020**
 No news about the code but still using logmailer in heavy production and it works and works and works. :) Logmailer has generated and sent over 18.000 mails now during the first year of our ML based stock fund [Globallytics Fund No. 1](https://globallytics.de/). Logmailer is an irreplacable tool for us. We get notified on errors and also have a kind of documentation for the BAFIN like "hey, we know it and we immediately take action if something goes wrong".
