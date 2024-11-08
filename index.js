@@ -66,7 +66,7 @@ class Mailer {
                 emailAddress: "",
                 sendEmail: false,
                 html: "",
-                subject: `${this.appName}`
+                subject: `${this.appName} Time: ${new Date().toLocaleString()}`
             }
 
             if (recipient.hasOwnProperty("emailAddress")) {
