@@ -199,7 +199,7 @@ class Mailer {
      * @param {Object} obj Object
      */
     convertObjectToHTMLTable(obj) {
-        //console.log("obj",obj);
+        console.log("obj",obj);
         if (obj && typeof (obj) === 'object') {
             let keys = Object.keys(obj);
             if (keys.length > 0) {
