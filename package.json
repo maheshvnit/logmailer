@@ -29,6 +29,6 @@
   },
   "homepage": "https://github.com/mindactuate/logmailer#readme",
   "dependencies": {
-    "emailjs": "^2.2.0"
+    "@sendgrid/mail": "^8.1.4"
   }
 }

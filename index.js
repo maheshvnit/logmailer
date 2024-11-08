@@ -1,4 +1,4 @@
-let email = require("emailjs/email");
+// let email = require("emailjs/email");
 
 /**
  * Mailer to aggregate error or log mails. It's a singleton. Create it once by `logmailer.create(..)`, use it then simply like `logmailer.add(..)` or `logmailer.send(..)`
@@ -37,14 +37,17 @@ class Mailer {
         this.appName = options.appName;
         this.mailAlias = options.mailAlias;
 
-        let mailClient = email.server.connect({
-            host: options.client.host,
-            user: options.client.user,
-            password: options.client.password,
-            ssl: options.client.ssl
-        });
+        // removed this
+        // let mailClient = email.server.connect({
+        //     host: options.client.host,
+        //     user: options.client.user,
+        //     password: options.client.password,
+        //     ssl: options.client.ssl
+        // });
 
-        this.mailClient = mailClient;
+        //this.mailClient = mailClient;
+        // added this for Sendgrid
+        this.mailClient = options.client;
         this.recipients = options.recipients;
         this.chapters = options.chapters;
     }
@@ -120,23 +123,50 @@ class Mailer {
         }
         if (recipientHTMLs.length > 0) {
             let recipientHTML = recipientHTMLs[0];
+            console.log(recipientHTML);
             if (recipientHTML.sendEmail) {
+                // let message = {
+                //     text: "Please use an email client, which is able to display HTML!",
+                //     subject: recipientHTML.subject,
+                //     from: this.mailAlias,
+                //     to: recipientHTML.emailAddress,
+                //     attachment: [
+                //         { data: `<html><h2>${recipientHTML.subject}</h2><div>${recipientHTML.html}</div></html>`, alternative: true }
+                //     ]
+                // }
+
                 let message = {
-                    text: "Please use an email client, which is able to display HTML!",
+                    to: recipientHTML.emailAddress, // Change to your recipient
+                    from: this.mailAlias, // Change to your verified sender
                     subject: recipientHTML.subject,
-                    from: this.mailAlias,
-                    to: recipientHTML.emailAddress,
-                    attachment: [
-                        { data: `<html><h2>${recipientHTML.subject}</h2><div>${recipientHTML.html}</div></html>`, alternative: true }
-                    ]
-                }
-                this.mailClient.send(message, (err, message) => {
-                    if (err) {
-                        errors[recipientHTML.emailAddress] = err;
-                    }
-                    recipientHTMLs.shift();
-                    this._mailSender(recipientHTMLs, errors, callback);
-                })
+                    //text: "Please use an email client, which is able to display HTML!",
+                    html: `<html><h2>${recipientHTML.subject}</h2><div>${recipientHTML.html}</div></html>`,
+                };
+
+                // this.mailClient.send(message, (err, message) => {
+                //     if (err) {
+                //         errors[recipientHTML.emailAddress] = err;
+                //     }
+                //     recipientHTMLs.shift();
+                //     this._mailSender(recipientHTMLs, errors, callback);
+                // })
+                this.mailClient
+                    .send(message)
+                    .then(() => {
+                        console.log('Email sent')
+                        recipientHTMLs.shift();
+                        this._mailSender(recipientHTMLs, errors, callback);                        
+                    })
+                    .catch((error) => {
+                        console.log("Email not sent");
+                        console.error("Email not sent", error.message);
+
+                        errors[recipientHTML.emailAddress] = error;
+
+                        recipientHTMLs.shift();
+                        this._mailSender(recipientHTMLs, errors, callback);
+
+                    });                
             } else {
                 recipientHTMLs.shift();
                 this._mailSender(recipientHTMLs, errors, callback);
@@ -169,6 +199,7 @@ class Mailer {
      * @param {Object} obj Object
      */
     convertObjectToHTMLTable(obj) {
+        console.log("obj",obj);
         if (obj && typeof (obj) === 'object') {
             let keys = Object.keys(obj);
             if (keys.length > 0) {
