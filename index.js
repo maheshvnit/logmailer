@@ -97,7 +97,7 @@ class Mailer {
                 if (chapter.html) {
                     if (chapter.hasOwnProperty("count")) {
                         if (chapter.count > 0) {
-                            recipientHTML.subject += ` | [${chapter.name}]: ${chapter.count} Time: ${new Date().toISOString()}`;
+                            recipientHTML.subject += ` | [${chapter.name}]: ${chapter.count} Time: ${new Date().toLocaleString()}`;
                             recipientHTML.html += `<h2><font color="${chapter.color}">${chapter.name}: ${chapter.count}</font></h2>`;
                         }
                     } else {
