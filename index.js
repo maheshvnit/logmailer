@@ -123,7 +123,7 @@ class Mailer {
         }
         if (recipientHTMLs.length > 0) {
             let recipientHTML = recipientHTMLs[0];
-            console.log(recipientHTML);
+            //console.log(recipientHTML);
             if (recipientHTML.sendEmail) {
                 // let message = {
                 //     text: "Please use an email client, which is able to display HTML!",
@@ -153,7 +153,7 @@ class Mailer {
                 this.mailClient
                     .send(message)
                     .then(() => {
-                        console.log('Email sent')
+                        //console.log('Email sent')
                         recipientHTMLs.shift();
                         this._mailSender(recipientHTMLs, errors, callback);                        
                     })
@@ -199,7 +199,7 @@ class Mailer {
      * @param {Object} obj Object
      */
     convertObjectToHTMLTable(obj) {
-        console.log("obj",obj);
+        //console.log("obj",obj);
         if (obj && typeof (obj) === 'object') {
             let keys = Object.keys(obj);
             if (keys.length > 0) {
